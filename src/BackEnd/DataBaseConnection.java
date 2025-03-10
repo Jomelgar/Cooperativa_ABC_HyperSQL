@@ -186,4 +186,50 @@ public class DataBaseConnection {
             return null;
         }
     }
+
+    public void addTelephones(String codeEmp, ArrayList<String> phones) {
+        if (phones.isEmpty()) return;
+        
+        try
+        {
+            String query = "INSERT INTO COOPERATIVA.usuario_telefono(codigo_empleado,telefonos) VALUES";
+            for (int i = 0; i < phones.size();i++) {
+                query += (i < phones.size()-1)? "(?,?), " : "(?,?)";
+            }
+            
+            int i = 1;
+            PreparedStatement stm = connection.prepareStatement(query);
+            for (String p : phones) 
+            {
+                stm.setString(i++, codeEmp);
+                stm.setString(i++, p);
+            }
+            
+            stm.executeUpdate();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public ArrayList<String> getTelephones(String codeEmp)
+    {
+        ArrayList<String> phones = new ArrayList<String>();
+        try
+        {
+            String query = "SELECT telefonos FROM COOPERATIVA.usuario_telefono WHERE codigo_empleado = ?";
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setString(1, codeEmp);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                phones.add(rs.getString("telefonos"));
+            }
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        return phones;
+    }
 }
