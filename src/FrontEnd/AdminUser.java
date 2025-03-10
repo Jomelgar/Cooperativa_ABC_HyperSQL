@@ -12,6 +12,7 @@ public class AdminUser extends javax.swing.JPanel {
 
     DefaultTableModel tableModel;
     private DefaultListModel<String> listModel;
+    private int phone_size;
     
     public AdminUser() {
         initComponents();
@@ -22,6 +23,7 @@ public class AdminUser extends javax.swing.JPanel {
         this.telehonelist.setModel(listModel);
         clearData();
         setData(BackEnd.Main.logged.getUsername());
+        phone_size = listModel.size();
     }
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -230,6 +232,12 @@ public class AdminUser extends javax.swing.JPanel {
         LinkedHashMap<String, Object> map = getData();
         map.put("usuario_modificador", BackEnd.Main.db.getCodeEmp(BackEnd.Main.logged.getUsername()));
         BackEnd.Main.db.modifiedUser(map,rolebtn.isSelected());
+        
+        ArrayList<String> phones = new ArrayList<>();
+        for (Object obj: listModel.toArray()) {
+            phones.add((String)obj);
+        }
+        BackEnd.Main.db.addTelephones(BackEnd.Main.db.getCodeEmp(map.get("id_usuario").toString()),phones);
         this.removeAll();
         this.repaint();
     }//GEN-LAST:event_modbtnActionPerformed
@@ -243,6 +251,7 @@ public class AdminUser extends javax.swing.JPanel {
         }
         
         BackEnd.Main.db.addUser(map,rolebtn.isSelected());
+        BackEnd.Main.db.addTelephones(BackEnd.Main.db.getCodeEmp(map.get("id_usuario").toString()),phones);
         clearData();
     }//GEN-LAST:event_addbtnActionPerformed
 
@@ -253,14 +262,28 @@ public class AdminUser extends javax.swing.JPanel {
 
     private void removelistbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removelistbtnActionPerformed
         // TODO add your handling code here:
-        listModel.remove(listModel.size() - 1);
+        if(phone_size < listModel.size())listModel.remove(listModel.size() - 1);
     }//GEN-LAST:event_removelistbtnActionPerformed
 
     private void addlistbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addlistbtnActionPerformed
-        // TODO add your handling code here:
-        if(phonefield.getText().trim() != ""){
+        
+        boolean search = false;
+        for(Object obj: listModel.toArray())
+        {
+            search = (((String)obj).equals(phonefield.getText()));
+        }
+        boolean integer = false;
+        try
+        {
+            Integer.parseInt(phonefield.getText());
+            integer = true;
+        }
+        catch(Exception e){integer = false;}
+        
+        if(phonefield.getText().trim() != "" && !(search) && integer){
             listModel.addElement(phonefield.getText());
             telehonelist.setModel(listModel);
+            phonefield.setText("");
         }
     }//GEN-LAST:event_addlistbtnActionPerformed
 
@@ -335,6 +358,9 @@ public class AdminUser extends javax.swing.JPanel {
             map.get("DEPARTAMENTO") != null ? map.get("DEPARTAMENTO").toString() : "",
             map.get("CALLE") != null ? map.get("CALLE").toString() : ""
         });
+        
+        ArrayList<String> phones = BackEnd.Main.db.getTelephones(BackEnd.Main.db.getCodeEmp(BackEnd.Main.logged.getUsername()));
+        addList(phones);
     }
     
     private void clearData() 
