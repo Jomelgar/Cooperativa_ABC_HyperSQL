@@ -1,17 +1,20 @@
 package FrontEnd;
 
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
+
 import java.util.LinkedHashMap;
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
-import java.util.Map;
+
 
 
 public class NormalUser extends javax.swing.JPanel {
 
     DefaultTableModel tableModel;
     private DefaultListModel<String> listModel;
+    private int phone_size;
     
     public NormalUser() {
         initComponents();
@@ -53,6 +56,8 @@ public class NormalUser extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         fmailfield = new javax.swing.JTextField();
+        fecha = new com.toedter.calendar.JDateChooser();
+        jLabel14 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(0,0,0,0));
         setOpaque(false);
@@ -60,16 +65,17 @@ public class NormalUser extends javax.swing.JPanel {
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         slastfield.setEditable(false);
-        add(slastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 260, 150, -1));
+        add(slastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 250, 150, -1));
 
         telehonelist.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        telehonelist.setEnabled(false);
         jScrollPane1.setViewportView(telehonelist);
 
-        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 220, 320, 100));
+        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 220, 220, 100));
 
         direcciontable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -85,46 +91,47 @@ public class NormalUser extends javax.swing.JPanel {
         direcciontable.setEnabled(false);
         jScrollPane2.setViewportView(direcciontable);
 
-        add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 370, 110));
+        add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 370, 80));
 
         jLabel2.setText("Segundo Apellido:");
-        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 240, -1, -1));
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 230, -1, -1));
 
         jLabel3.setText("Codigo de Empleado:");
-        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, -1, -1));
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
 
-        jLabel4.setText("Telefonos:");
-        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 200, -1, -1));
+        jLabel4.setText("Fecha de Nacimiento:");
+        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, -1, -1));
 
         jLabel5.setText("Rol:");
-        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 120, -1, -1));
+        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 120, -1, -1));
 
         jLabel6.setText("Segundo Nombre:");
-        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 180, -1, -1));
+        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 170, -1, -1));
 
         jLabel7.setText("Primer Apellido:");
-        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, -1, -1));
+        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, -1, -1));
 
         jLabel8.setText("Primer Nombre:");
-        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
+        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
 
         jLabel9.setText("Nombre de Usuario:");
-        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 60, -1, -1));
+        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 60, -1, -1));
 
         jLabel10.setText("Dirección:");
         add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 60, -1, -1));
 
         codeempfield.setEditable(false);
-        add(codeempfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 130, -1));
+        add(codeempfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 130, -1));
 
         userfield.setEditable(false);
-        add(userfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, 130, -1));
+        add(userfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, 130, -1));
 
         jLabel11.setText("Contraseña:");
-        add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, -1));
+        add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
 
+        rolebtn.setText("¿Es Admin?");
         rolebtn.setEnabled(false);
-        add(rolebtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 140, -1, -1));
+        add(rolebtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 140, -1, -1));
 
         passwordfield.setEditable(false);
         passwordfield.addActionListener(new java.awt.event.ActionListener() {
@@ -132,28 +139,35 @@ public class NormalUser extends javax.swing.JPanel {
                 passwordfieldActionPerformed(evt);
             }
         });
-        add(passwordfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 220, -1));
+        add(passwordfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 220, -1));
 
         fnamefield.setEditable(false);
-        add(fnamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 130, -1));
+        add(fnamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 130, -1));
 
         snamefield.setEditable(false);
-        add(snamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 200, 150, -1));
+        add(snamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 190, 150, -1));
 
         flastfield.setEditable(false);
-        add(flastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 150, -1));
+        add(flastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 150, -1));
 
         smailfield.setEditable(false);
-        add(smailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 150, -1));
+        add(smailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 300, 150, -1));
 
         jLabel12.setText("Correo Secundario:");
-        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 290, -1, -1));
+        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 280, -1, -1));
 
         jLabel13.setText("Correo Primario:");
-        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, -1, -1));
+        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, -1, -1));
 
         fmailfield.setEditable(false);
-        add(fmailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, 150, -1));
+        add(fmailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 150, -1));
+
+        fecha.setDateFormatString("dd/MM/yyyy");
+        fecha.setEnabled(false);
+        add(fecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 220, 120, -1));
+
+        jLabel14.setText("Telefonos:");
+        add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 200, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void passwordfieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordfieldActionPerformed
@@ -161,6 +175,7 @@ public class NormalUser extends javax.swing.JPanel {
     }//GEN-LAST:event_passwordfieldActionPerformed
     
     private void addList(ArrayList<String> data) {
+        listModel.removeAllElements();
         for (String item : data) {
             listModel.addElement(item);
         }
@@ -180,7 +195,7 @@ public class NormalUser extends javax.swing.JPanel {
         String[] row = new String [tableModel.getColumnCount()];
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
             if(direcciontable.getValueAt(0, i) != null){
-            row[i] = direcciontable.getValueAt(0, i).toString();
+                row[i] = direcciontable.getValueAt(0, i).toString();
             }
             else
             {
@@ -197,6 +212,7 @@ public class NormalUser extends javax.swing.JPanel {
         
         map.put("correo_primario", (fmailfield.getText().trim() == "")? null: fmailfield.getText());
         map.put("correo_secundario", (smailfield.getText().trim() == "")? null: smailfield.getText());
+        map.put("fecha_de_nacimiento", (fecha.getDate()));
         
         return map;
     }
@@ -223,6 +239,10 @@ public class NormalUser extends javax.swing.JPanel {
             map.get("DEPARTAMENTO") != null ? map.get("DEPARTAMENTO").toString() : "",
             map.get("CALLE") != null ? map.get("CALLE").toString() : ""
         });
+        fecha.setDate((Date)map.get("FECHA_NACIMIENTO"));
+        ArrayList<String> phones = BackEnd.Main.db.getTelephones(BackEnd.Main.db.getCodeEmp(user));
+        addList(phones);
+        phone_size = listModel.size();
     }
     
     private void clearData() 
@@ -240,10 +260,12 @@ public class NormalUser extends javax.swing.JPanel {
         listModel.clear();
         tableModel.removeRow(0);
         tableModel.addRow(new Object[]{"","","","","",""});
+        fecha.setDate(null);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField codeempfield;
     private javax.swing.JTable direcciontable;
+    private com.toedter.calendar.JDateChooser fecha;
     private javax.swing.JTextField flastfield;
     private javax.swing.JTextField fmailfield;
     private javax.swing.JTextField fnamefield;
@@ -251,6 +273,7 @@ public class NormalUser extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

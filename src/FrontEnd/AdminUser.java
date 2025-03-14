@@ -1,11 +1,13 @@
 package FrontEnd;
 
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
+
 import java.util.LinkedHashMap;
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
-import java.util.Map;
+
 
 
 public class AdminUser extends javax.swing.JPanel {
@@ -23,7 +25,6 @@ public class AdminUser extends javax.swing.JPanel {
         this.telehonelist.setModel(listModel);
         clearData();
         setData(BackEnd.Main.logged.getUsername());
-        phone_size = listModel.size();
     }
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -65,6 +66,8 @@ public class AdminUser extends javax.swing.JPanel {
         removelistbtn = new javax.swing.JButton();
         addlistbtn = new javax.swing.JButton();
         phonefield = new javax.swing.JTextField();
+        fecha = new com.toedter.calendar.JDateChooser();
+        jLabel14 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(0,0,0,0));
         setOpaque(false);
@@ -97,7 +100,7 @@ public class AdminUser extends javax.swing.JPanel {
             }
         });
         add(searchbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 20, -1, -1));
-        add(slastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 260, 150, -1));
+        add(slastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 250, 150, -1));
         add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 380, 20));
 
         telehonelist.setModel(new javax.swing.AbstractListModel<String>() {
@@ -107,7 +110,7 @@ public class AdminUser extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(telehonelist);
 
-        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 220, 170, 100));
+        add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 220, 110, 100));
 
         direcciontable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -122,31 +125,31 @@ public class AdminUser extends javax.swing.JPanel {
         ));
         jScrollPane2.setViewportView(direcciontable);
 
-        add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 370, 110));
+        add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 370, 70));
 
         jLabel2.setText("Segundo Apellido:");
-        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 240, -1, -1));
+        add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 230, -1, -1));
 
         jLabel3.setText("Codigo de Empleado:");
-        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, -1, -1));
+        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
 
-        jLabel4.setText("Telefonos:");
-        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 200, -1, -1));
+        jLabel4.setText("Fecha de Nacimiento:");
+        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, -1, -1));
 
         jLabel5.setText("Rol:");
-        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 120, -1, -1));
+        add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 120, -1, -1));
 
         jLabel6.setText("Segundo Nombre:");
-        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 180, -1, -1));
+        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 170, -1, -1));
 
         jLabel7.setText("Primer Apellido:");
-        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, -1, -1));
+        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, -1, -1));
 
         jLabel8.setText("Primer Nombre:");
-        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, -1, -1));
+        add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
 
         jLabel9.setText("Nombre de Usuario:");
-        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 60, -1, -1));
+        add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 60, -1, -1));
 
         jLabel10.setText("Dirección:");
         add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 60, -1, -1));
@@ -164,32 +167,32 @@ public class AdminUser extends javax.swing.JPanel {
         add(searchfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 380, -1));
 
         codeempfield.setEditable(false);
-        add(codeempfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 130, -1));
-        add(userfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, 130, -1));
+        add(codeempfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 130, -1));
+        add(userfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, 130, -1));
 
         jLabel11.setText("Contraseña:");
-        add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, -1));
+        add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
 
         rolebtn.setText("¿Es Admin?");
-        add(rolebtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 140, -1, -1));
+        add(rolebtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 140, -1, -1));
 
         passwordfield.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 passwordfieldActionPerformed(evt);
             }
         });
-        add(passwordfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 220, -1));
-        add(fnamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 130, -1));
-        add(snamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 200, 150, -1));
-        add(flastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 150, -1));
-        add(smailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 150, -1));
+        add(passwordfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 220, -1));
+        add(fnamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 130, -1));
+        add(snamefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 190, 150, -1));
+        add(flastfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 150, -1));
+        add(smailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 300, 150, -1));
 
         jLabel12.setText("Correo Secundario:");
-        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 290, -1, -1));
+        add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 280, -1, -1));
 
         jLabel13.setText("Correo Primario:");
-        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, -1, -1));
-        add(fmailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, 150, -1));
+        add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, -1, -1));
+        add(fmailfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 150, -1));
 
         Cleanbtn.setBackground(new java.awt.Color(57, 45, 82));
         Cleanbtn.setFont(new java.awt.Font("Sitka Text", 0, 14)); // NOI18N
@@ -221,7 +224,13 @@ public class AdminUser extends javax.swing.JPanel {
             }
         });
         add(addlistbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 260, -1, -1));
-        add(phonefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 230, 180, -1));
+        add(phonefield, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 230, 110, -1));
+
+        fecha.setDateFormatString("dd/MM/yyyy");
+        add(fecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 220, 120, -1));
+
+        jLabel14.setText("Telefonos:");
+        add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 200, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void passwordfieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordfieldActionPerformed
@@ -234,9 +243,15 @@ public class AdminUser extends javax.swing.JPanel {
         BackEnd.Main.db.modifiedUser(map,rolebtn.isSelected());
         
         ArrayList<String> phones = new ArrayList<>();
+        int i = 0;
         for (Object obj: listModel.toArray()) {
-            phones.add((String)obj);
+            if(i >= phone_size)
+            {
+                phones.add((String)obj);
+            }
+            i++;
         }
+        
         BackEnd.Main.db.addTelephones(BackEnd.Main.db.getCodeEmp(map.get("id_usuario").toString()),phones);
         this.removeAll();
         this.repaint();
@@ -246,8 +261,13 @@ public class AdminUser extends javax.swing.JPanel {
         LinkedHashMap<String, Object> map = getData();
         map.put("usuario_creador", BackEnd.Main.db.getCodeEmp(BackEnd.Main.logged.getUsername()));
         ArrayList<String> phones = new ArrayList<>();
+        int i = 0;
         for (Object obj: listModel.toArray()) {
-            phones.add((String)obj);
+            if(i >= phone_size)
+            {
+                phones.add((String)obj);
+            }
+            i++;
         }
         
         BackEnd.Main.db.addUser(map,rolebtn.isSelected());
@@ -293,9 +313,11 @@ public class AdminUser extends javax.swing.JPanel {
         if(BackEnd.Main.db.getCodeEmp(user) != null){
             setData(user);
         }
+        
     }//GEN-LAST:event_searchbtnActionPerformed
     
     private void addList(ArrayList<String> data) {
+        listModel.removeAllElements();
         for (String item : data) {
             listModel.addElement(item);
         }
@@ -315,7 +337,7 @@ public class AdminUser extends javax.swing.JPanel {
         String[] row = new String [tableModel.getColumnCount()];
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
             if(direcciontable.getValueAt(0, i) != null){
-            row[i] = direcciontable.getValueAt(0, i).toString();
+                row[i] = direcciontable.getValueAt(0, i).toString();
             }
             else
             {
@@ -332,6 +354,7 @@ public class AdminUser extends javax.swing.JPanel {
         
         map.put("correo_primario", (fmailfield.getText().trim() == "")? null: fmailfield.getText());
         map.put("correo_secundario", (smailfield.getText().trim() == "")? null: smailfield.getText());
+        map.put("fecha_de_nacimiento", (fecha.getDate()));
         
         return map;
     }
@@ -358,9 +381,11 @@ public class AdminUser extends javax.swing.JPanel {
             map.get("DEPARTAMENTO") != null ? map.get("DEPARTAMENTO").toString() : "",
             map.get("CALLE") != null ? map.get("CALLE").toString() : ""
         });
-        
-        ArrayList<String> phones = BackEnd.Main.db.getTelephones(BackEnd.Main.db.getCodeEmp(BackEnd.Main.logged.getUsername()));
+        fecha.setDate((Date)map.get("FECHA_NACIMIENTO"));
+        ArrayList<String> phones = BackEnd.Main.db.getTelephones(BackEnd.Main.db.getCodeEmp(user));
         addList(phones);
+        phone_size = listModel.size();
+        System.out.println(phone_size);
     }
     
     private void clearData() 
@@ -378,6 +403,8 @@ public class AdminUser extends javax.swing.JPanel {
         listModel.clear();
         tableModel.removeRow(0);
         tableModel.addRow(new Object[]{"","","","","",""});
+        fecha.setDate(null);
+        phone_size = 0;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Cleanbtn;
@@ -386,6 +413,7 @@ public class AdminUser extends javax.swing.JPanel {
     private javax.swing.JTextField codeempfield;
     private javax.swing.JButton delbtn;
     private javax.swing.JTable direcciontable;
+    private com.toedter.calendar.JDateChooser fecha;
     private javax.swing.JTextField flastfield;
     private javax.swing.JTextField fmailfield;
     private javax.swing.JTextField fnamefield;
@@ -393,6 +421,7 @@ public class AdminUser extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

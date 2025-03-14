@@ -1,17 +1,14 @@
 package BackEnd;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import org.hsqldb.jdbc.JDBCDataSource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import org.hsqldb.types.Types;
+import java.sql.*;
 
 public class DataBaseConnection {
    private String url = "jdbc:hsqldb:hsql://localhost:9001/coop";
@@ -68,26 +65,30 @@ public class DataBaseConnection {
 
     }
     
-   public boolean addUser(LinkedHashMap<String, Object> userData, boolean role) {
-        String query = "INSERT INTO COOPERATIVA.usuario_cliente("
-                + "id_usuario, contrasena, primer_nombre, segundo_nombre, primer_apellido, "
-                + "segundo_apellido, referencia, ciudad, avenida, casa, departamento, calle, "
-                + "correo_primario, correo_secundario, usuario_creador, rol ) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (PreparedStatement stm = connection.prepareStatement(query)) {
-            int index = 1;
-            for (Map.Entry<String, Object> entry : userData.entrySet()) {
-                if (entry.getValue() == null) {
-                    stm.setNull(index, Types.VARCHAR);
-                } else {
-                    stm.setObject(index, entry.getValue());
-                }
-                index++;
-            }
-            stm.setBoolean(index, role);
+   public boolean addUser(LinkedHashMap<String, Object> data, boolean role) {
+        String sql = "CALL COOPERATIVA.crear_usuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (CallableStatement stmt = connection.prepareCall(sql)) {
+            stmt.setString(1, (String) data.get("codigo_empleado"));
+            stmt.setString(2, (String) data.get("id_usuario"));
+            stmt.setString(3, (String) data.get("contrasena"));
+            stmt.setBoolean(4, role);
+            stmt.setDate(5, (data.get("fecha_de_nacimiento") != null) 
+                                ? new java.sql.Date(((java.util.Date) data.get("fecha_de_nacimiento")).getTime()): null);
+            stmt.setString(6, (String) data.get("primer_nombre"));
+            stmt.setString(7, (String) data.get("segundo_nombre"));
+            stmt.setString(8, (String) data.get("primer_apellido"));
+            stmt.setString(9, (String) data.get("segundo_apellido"));
+            stmt.setString(10, (String) data.get("referencia"));
+            stmt.setString(11, (String) data.get("ciudad"));
+            stmt.setString(12, (String) data.get("avenida"));
+            stmt.setString(13, (String) data.get("casa"));
+            stmt.setString(14, (String) data.get("departamento"));
+            stmt.setString(15, (String) data.get("calle"));
+            stmt.setString(16, (String) data.get("correo_primario"));
+            stmt.setString(17, (String) data.get("correo_secundario"));
+            stmt.setString(18, (String) data.get("usuario_creador"));
             
-            stm.executeUpdate();
+            stmt.execute();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,10 +97,10 @@ public class DataBaseConnection {
     }
    
     public LinkedHashMap<String, Object> getUserById(String idUsuario) {
-        String query = "SELECT * FROM COOPERATIVA.usuario_cliente WHERE id_usuario = ?";
+        String query = "CALL COOPERATIVA.obtener_usuario_por_id(?)";
         LinkedHashMap<String, Object> userData = new LinkedHashMap<>();
-
-        try {
+        try
+        {
             PreparedStatement stm = connection.prepareStatement(query); 
 
             stm.setString(1, idUsuario);
@@ -114,49 +115,41 @@ public class DataBaseConnection {
                     userData.put(columnName, value);
                 }
             }
-
-        } catch (SQLException e) {
+        }catch(Exception e)
+        {
             e.printStackTrace();
         }
+        
         return userData;
     }
     public boolean modifiedUser(LinkedHashMap<String, Object> userData,boolean role)
     {
         try 
         {
-            String query = ("UPDATE COOPERATIVA.usuario_cliente SET ");
-            for (String column : userData.keySet()) {
-                if (!column.equals("id_usuario")) {
-                    query+= column + (" = ?, ");
-                }
-            }
-            query += "rol = ?, ";
-            query += "fecha_ultima_actualizacion = ?";
-            query += (" WHERE id_usuario = ?");
-             int index = 1;
-            Object idUsuario = null;
-            PreparedStatement stm = connection.prepareStatement(query);
-            for (Map.Entry<String, Object> entry : userData.entrySet()) {
-                if (entry.getKey().equals("id_usuario")) {
-                    idUsuario = entry.getValue();
-                    continue;
-                }
-                if (entry.getValue() == null) {
-                    stm.setNull(index, Types.VARCHAR);
-                } else {
-                    stm.setObject(index, entry.getValue());
-                }
-                index++;
-            }
-            stm.setBoolean(index, role);
-            index++;
-            LocalDate fechaActual = LocalDate.now();
-            stm.setDate(index, java.sql.Date.valueOf(fechaActual));
-            index++;
-            stm.setObject(index, idUsuario);
-            stm.executeUpdate();
-            letRole(BackEnd.Main.logged);
-            return true;
+            String sql = "CALL COOPERATIVA.actualizar_usuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            CallableStatement ps = connection.prepareCall(sql);
+            ps.setString(1, getStringOrNull(userData.get("id_usuario")));
+            ps.setString(2, getStringOrNull(userData.get("contrasena")));
+            ps.setBoolean(3, role);
+            ps.setDate(4,  (userData.get("fecha_de_nacimiento") != null) 
+                                ? new java.sql.Date(((java.util.Date) userData.get("fecha_de_nacimiento")).getTime())  : null);
+            ps.setString(5, getStringOrNull(userData.get("primer_nombre")));
+            ps.setString(6, getStringOrNull(userData.get("segundo_nombre")));
+            ps.setString(7, getStringOrNull(userData.get("primer_apellido")));
+            ps.setString(8, getStringOrNull(userData.get("segundo_apellido")));
+            ps.setString(9, getStringOrNull(userData.get("referencia")));
+            ps.setString(10, getStringOrNull(userData.get("ciudad")));
+            ps.setString(11, getStringOrNull(userData.get("avenida")));
+            ps.setString(12, getStringOrNull(userData.get("casa")));
+            ps.setString(13, getStringOrNull(userData.get("departamento")));
+            ps.setString(14, getStringOrNull(userData.get("calle")));
+            ps.setString(15, getStringOrNull(userData.get("correo_primario")));
+            ps.setString(16, getStringOrNull(userData.get("correo_secundario")));
+            ps.setString(17, getCodeEmp(Main.logged.getUsername()));
+            
+            // Ejecutar la consulta
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
         }
         catch(Exception e)
         {
@@ -192,20 +185,14 @@ public class DataBaseConnection {
         
         try
         {
-            String query = "INSERT INTO COOPERATIVA.usuario_telefono(codigo_empleado,telefonos) VALUES";
+            String query = "CALL COOPERATIVA.crear_usuario_telefono(?,?)";
             for (int i = 0; i < phones.size();i++) {
-                query += (i < phones.size()-1)? "(?,?), " : "(?,?)";
+                PreparedStatement stm = connection.prepareStatement(query);
+                int j =1;
+                stm.setString(j++, codeEmp);
+                stm.setString(j, phones.get(i));
+                stm.executeUpdate();
             }
-            
-            int i = 1;
-            PreparedStatement stm = connection.prepareStatement(query);
-            for (String p : phones) 
-            {
-                stm.setString(i++, codeEmp);
-                stm.setString(i++, p);
-            }
-            
-            stm.executeUpdate();
         }
         catch(Exception e)
         {
@@ -218,7 +205,7 @@ public class DataBaseConnection {
         ArrayList<String> phones = new ArrayList<String>();
         try
         {
-            String query = "SELECT telefonos FROM COOPERATIVA.usuario_telefono WHERE codigo_empleado = ?";
+            String query = "CALL COOPERATIVA.obtener_usuario_telefono(?)";
             PreparedStatement stm = connection.prepareStatement(query);
             stm.setString(1, codeEmp);
             ResultSet rs = stm.executeQuery();
@@ -232,4 +219,99 @@ public class DataBaseConnection {
         
         return phones;
     }
+    
+    public Account getAccount(String code)
+    {
+        Account account = null;
+        try
+        {
+            String query = "CALL COOPERATIVA.obtener_cuenta(?)";
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setString(1,code);
+            ResultSet rs = stm.executeQuery();
+            
+            String t1 = null, t2 = null;
+            double s1 = 0, s2 = 0;
+            if (rs.next()) 
+            {
+                t1 = rs.getString(1);
+                s1 = rs.getDouble(2);
+            }
+            if (rs.next()) 
+            {
+                t2 = rs.getString(1);
+                s2 = rs.getDouble(2);
+            }
+            if(t1.contains("CAP"))
+            {
+                account = new Account(t1,t2,s1,s2);
+            }else
+            {
+                account = new Account(t2,t1,s2,s1);
+            }
+            
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        return account;
+    }
+    
+    public boolean setPayment(String num_cuenta, String desc, double saldo)
+    {
+        try
+        {
+            String query = "CALL COOPERATIVA.crear_transaccion(?,?,?)";
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setString(1,num_cuenta);
+            stm.setDouble(2,saldo);
+            stm.setString(3,desc);
+            stm.executeUpdate();
+            return true;
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public void modPayment(double saldo, String cuenta, String codeEmp)
+    {
+        try
+        {
+            String query = "CALL COOPERATIVA.modificar_cuenta(?,?,?)";
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setString(1,cuenta);
+            stm.setDouble(2,saldo);
+            stm.setString(3,codeEmp);
+            stm.executeUpdate();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public void setLiquidation(String codeEmp, double saldo)
+    {
+        try
+        {
+            String query = "CALL COOPERATIVA.crear_liquidacion_parcial(?,?)";
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setString(1,codeEmp);
+            stm.setDouble(2,saldo);
+            stm.executeUpdate();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    private String getStringOrNull(Object value) {
+        if (value == null || value.toString().trim().isEmpty()) {
+            return null;
+        }
+        return value.toString();
+    }
+    
 }

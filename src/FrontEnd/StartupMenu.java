@@ -22,10 +22,10 @@ public class StartupMenu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        accountbtn = new javax.swing.JButton();
         exitbtn = new javax.swing.JButton();
         userbtn = new javax.swing.JButton();
         startbtn = new javax.swing.JButton();
-        accountbtn = new javax.swing.JButton();
         display = new javax.swing.JPanel();
         BackGround = new javax.swing.JLabel();
         loansbtn = new javax.swing.JButton();
@@ -34,6 +34,15 @@ public class StartupMenu extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(960, 550));
         setPreferredSize(new java.awt.Dimension(960, 550));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        accountbtn.setBorderPainted(false);
+        accountbtn.setContentAreaFilled(false);
+        accountbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountbtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(accountbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 350, 110, 80));
 
         exitbtn.setBackground(new java.awt.Color(0,0,0,0));
         exitbtn.addActionListener(new java.awt.event.ActionListener() {
@@ -60,10 +69,6 @@ public class StartupMenu extends javax.swing.JFrame {
             }
         });
         getContentPane().add(startbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 90, 110));
-
-        accountbtn.setBorderPainted(false);
-        accountbtn.setContentAreaFilled(false);
-        getContentPane().add(accountbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 350, 110, 80));
 
         display.setBackground(new java.awt.Color(0,0,0,0)
         );
@@ -116,6 +121,21 @@ public class StartupMenu extends javax.swing.JFrame {
         this.revalidate();
         this.repaint();
     }//GEN-LAST:event_startbtnActionPerformed
+
+    private void accountbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountbtnActionPerformed
+        display.removeAll();
+        if(Main.logged.isAdmin())
+        {
+            display.add(new AccountAdmin());
+        }else
+        {
+            
+        }
+        display.revalidate();
+        display.repaint();
+        this.revalidate();
+        this.repaint();
+    }//GEN-LAST:event_accountbtnActionPerformed
 
     public void DisplayStart()
     {

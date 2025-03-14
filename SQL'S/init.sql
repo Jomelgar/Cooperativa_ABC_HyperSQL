@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS COOPERATIVA.transaccion(
 );
 
 CREATE TABLE IF NOT EXISTS COOPERATIVA.liquidacion(
-	numero_liquidacion VARCHAR(8) NOT NULL,
+	numero_liquidacion VARCHAR(9) NOT NULL,
 	monto DECIMAL(10,2) DEFAULT 0,
 	fecha_de_retiro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	tipo VARCHAR(8) NOT NULL,
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS COOPERATIVA.liquidacion(
 
 CREATE TABLE IF NOT EXISTS COOPERATIVA.transaccion_liquidacion
 (
-	codigo_transaccion VARCHAR(100) NOT NULL,
-	numero_liquidacion VARCHAR(8) NOT NULL,
+	codigo_transaccion VARCHAR(100),
+	numero_liquidacion VARCHAR(9) NOT NULL,
 	PRIMARY KEY(codigo_transaccion),
 	FOREIGN KEY(codigo_transaccion) REFERENCES COOPERATIVA.transaccion(codigo_transaccion),
 	FOREIGN KEY(numero_liquidacion) REFERENCES COOPERATIVA.liquidacion(numero_liquidacion)
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS COOPERATIVA.cierre_pagos
 
 CREATE TABLE IF NOT EXISTS COOPERATIVA.cierre_transaccion
 (
-	codigo_transaccion VARCHAR(100) not null,
+	codigo_transaccion VARCHAR(100),
 	id_cierre INTEGER,
 	PRIMARY KEY (codigo_transaccion),
 	FOREIGN KEY(codigo_transaccion) REFERENCES COOPERATIVA.transaccion(codigo_transaccion),
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS COOPERATIVA.liquidacion_pagos
 (
 	numero_prestamos VARCHAR(16),
 	numero_de_pago VARCHAR(5),
-	numero_liquidacion VARCHAR(8),
+	numero_liquidacion VARCHAR(9),
 	PRIMARY KEY (numero_prestamos,numero_de_pago),
 	FOREIGN KEY(numero_prestamos,numero_de_pago) REFERENCES COOPERATIVA.pagos(numero_prestamos,numero_de_pago),
 	FOREIGN KEY(numero_liquidacion) REFERENCES COOPERATIVA.liquidacion(numero_liquidacion)
@@ -197,6 +197,12 @@ BEGIN ATOMIC
 END;
 
 
+CREATE VIEW IF NOT EXISTS COOPERATIVA.respaldo_usuario AS (SELECT * FROM COOPERATIVA.usuario_cliente WHERE 1=0) WITH CHECK OPTION;
+CREATE VIEW IF NOT EXISTS COOPERATIVA.respaldo_usuario_telefono AS (SELECT * FROM COOPERATIVA.usuario_telefono WHERE 1=0) WITH CHECK OPTION;
+CREATE VIEW IF NOT EXISTS COOPERATIVA.respaldo_cuenta AS (SELECT * FROM COOPERATIVA.cuenta WHERE 1=0) WITH CHECK OPTION;
+CREATE VIEW IF NOT EXISTS COOPERATIVA.respaldo_transaccion AS (SELECT * FROM COOPERATIVA.transaccion WHERE 1=0) WITH CHECK OPTION;
+
+
 --TRIGGERS
 DROP TRIGGER IF EXISTS usuario_cliente_tia;
 CREATE TRIGGER usuario_cliente_tia
@@ -249,8 +255,202 @@ BEGIN ATOMIC
 	SET newrow.numero_de_pago = CONCAT(newrow.numero_prestamos, CONCAT('-',COOPERATIVA.conseguir_num_pago(newrow.numero_prestamos)));
 END;
 
+CREATE TRIGGER usuario_cliente_tda
+AFTER DELETE ON COOPERATIVA.usuario_cliente
+REFERENCING old ROW AS oldrow
+FOR EACH ROW
+BEGIN ATOMIC
+	INSERT INTO COOPERATIVA.respaldo_usuario (
+        codigo_empleado, id_usuario, contrasena, rol, fecha_nacimiento, 
+        primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, referencia, 
+        ciudad, avenida, casa, departamento, calle, 
+        correo_primario, correo_secundario, fecha_de_creacion, 
+        fecha_ultima_actualizacion, usuario_creador, usuario_modificador
+    ) VALUES (
+        oldrow.codigo_empleado, oldrow.id_usuario, oldrow.contrasena, oldrow.rol, oldrow.fecha_nacimiento, 
+        oldrow.primer_nombre, oldrow.segundo_nombre, oldrow.primer_apellido, oldrow.segundo_apellido, oldrow.referencia, 
+        oldrow.ciudad, oldrow.avenida, oldrow.casa, oldrow.departamento, oldrow.calle, 
+        oldrow.correo_primario, oldrow.correo_secundario, oldrow.fecha_de_creacion, 
+        oldrow.fecha_ultima_actualizacion, oldrow.usuario_creador, oldrow.usuario_modificador
+    );
+END;
+
+
+--PROCEDURE
+CREATE PROCEDURE COOPERATIVA.crear_usuario(codigo_empleado VARCHAR(8),
+	id_usuario VARCHAR(100),
+	contrasena VARCHAR(1000),
+	rol BOOLEAN,
+	fecha_nacimiento DATE,
+	primer_nombre VARCHAR(100),
+	segundo_nombre VARCHAR(100),
+	primer_apellido VARCHAR(100),
+	segundo_apellido VARCHAR(100),
+	referencia VARCHAR(100),
+	ciudad VARCHAR(100),
+	avenida VARCHAR(100),
+	casa VARCHAR(100),
+	departamento VARCHAR(100),
+	calle VARCHAR(100),
+	correo_primario VARCHAR(100),
+	correo_secundario VARCHAR(100),
+	creador VARCHAR(8))
+MODIFIES SQL DATA
+BEGIN ATOMIC
+	INSERT INTO COOPERATIVA.usuario_cliente(codigo_empleado, id_usuario, contrasena, rol, fecha_nacimiento, 
+        primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, referencia, 
+        ciudad, avenida, casa, departamento, calle, 
+        correo_primario, correo_secundario,usuario_creador) VALUES
+	(codigo_empleado, id_usuario, contrasena, rol, fecha_nacimiento, 
+        primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, referencia, 
+        ciudad, avenida, casa, departamento, calle, 
+        correo_primario, correo_secundario, creador);
+END;
+
+CREATE PROCEDURE COOPERATIVA.actualizar_usuario(
+    usuario VARCHAR(100),
+    contrasena VARCHAR(1000),
+    rol BOOLEAN,
+    fecha_nacimiento DATE,
+    primer_nombre VARCHAR(100),
+    segundo_nombre VARCHAR(100),
+    primer_apellido VARCHAR(100),
+    segundo_apellido VARCHAR(100),
+    referencia VARCHAR(100),
+    ciudad VARCHAR(100),
+    avenida VARCHAR(100),
+    casa VARCHAR(100),
+    departamento VARCHAR(100),
+    calle VARCHAR(100),
+    correo_primario VARCHAR(100),
+    correo_secundario VARCHAR(100),
+    modificador VARCHAR(8)
+)
+MODIFIES SQL DATA
+BEGIN ATOMIC
+    UPDATE COOPERATIVA.usuario_cliente
+    SET 
+        contrasena = contrasena,
+        rol = rol,
+        fecha_nacimiento = fecha_nacimiento,
+        primer_nombre = primer_nombre,
+        segundo_nombre = segundo_nombre,
+        primer_apellido = primer_apellido,
+        segundo_apellido = segundo_apellido,
+        referencia = referencia,
+        ciudad = ciudad,
+        avenida = avenida,
+        casa = casa,
+        departamento = departamento,
+        calle = calle,
+        correo_primario = correo_primario,
+        correo_secundario = correo_secundario,
+        usuario_modificador = modificador,
+		fecha_ultima_actualizacion = CURRENT_TIMESTAMP
+        WHERE id_usuario = usuario;
+
+END;
+
+CREATE FUNCTION COOPERATIVA.obtener_usuario_por_id(usuario VARCHAR(100))
+RETURNS TABLE (
+    codigo_empleado VARCHAR(8),
+    id_usuario VARCHAR(100),
+    contrasena VARCHAR(1000),
+    rol BOOLEAN,
+    fecha_nacimiento DATE,
+    primer_nombre VARCHAR(100),
+    segundo_nombre VARCHAR(100),
+    primer_apellido VARCHAR(100),
+    segundo_apellido VARCHAR(100),
+    referencia VARCHAR(100),
+    ciudad VARCHAR(100),
+    avenida VARCHAR(100),
+    casa VARCHAR(100),
+    departamento VARCHAR(100),
+    calle VARCHAR(100),
+    correo_primario VARCHAR(100),
+    correo_secundario VARCHAR(100),
+    fecha_de_creacion TIMESTAMP,
+    fecha_ultima_actualizacion TIMESTAMP,
+    usuario_creador VARCHAR(8),
+    usuario_modificador VARCHAR(8)
+)
+READS SQL DATA
+BEGIN ATOMIC
+    RETURN TABLE
+        (SELECT 
+           *
+        FROM COOPERATIVA.usuario_cliente
+        WHERE id_usuario = usuario);
+    
+END;
+
+CREATE PROCEDURE COOPERATIVA.crear_usuario_telefono(codigo_emp VARCHAR(8), telef VARCHAR(8))
+MODIFIES SQL DATA
+BEGIN ATOMIC
+	INSERT INTO COOPERATIVA.usuario_telefono(codigo_empleado,telefonos) VALUES (codigo_emp, telef);
+END;
+
+CREATE FUNCTION COOPERATIVA.obtener_usuario_telefono(codigo_emp VARCHAR(8))
+RETURNS TABLE
+(
+	codigo_empleado VARCHAR(8), telefonos VARCHAR(8)
+)
+READS SQL DATA
+BEGIN ATOMIC 
+	RETURN TABLE (SELECT * FROM COOPERATIVA.usuario_telefono WHERE codigo_empleado = codigo_emp);
+END;
+
+CREATE FUNCTION COOPERATIVA.obtener_cuenta(codigo_emp VARCHAR(8))
+RETURNS TABLE
+(
+	numero_cuenta VARCHAR(12),
+	saldo DECIMAL(10,2)
+)
+READS SQL DATA
+BEGIN ATOMIC
+	RETURN TABLE (SELECT numero_cuenta, saldo FROM COOPERATIVA.cuenta WHERE codigo_empleado = codigo_emp);
+END;
+
+CREATE PROCEDURE COOPERATIVA.crear_transaccion(num_cuenta VARCHAR(12), sald DECIMAL(10,2), descrip VARCHAR(256))
+MODIFIES SQL DATA
+BEGIN ATOMIC
+		INSERT INTO COOPERATIVA.transaccion(monto, comentario, numero_cuenta) VALUES(sald,descrip,num_cuenta);
+		UPDATE COOPERATIVA.cuenta c SET c.saldo = c.saldo + sald WHERE c.numero_cuenta = num_cuenta;
+END;
+
+CREATE PROCEDURE COOPERATIVA.modificar_cuenta(num_cuenta VARCHAR(12), sald DECIMAL(10,2), cod_emp VARCHAR(8))
+MODIFIES SQL DATA
+BEGIN ATOMIC
+	UPDATE COOPERATIVA.cuenta c 
+	SET c.saldo = sald, c.fecha_ultima_actualizacion = CURRENT_TIMESTAMP, c.usuario_modificador = cod_emp 
+	WHERE c.numero_cuenta = num_cuenta;
+END;
+
+CREATE PROCEDURE COOPERATIVA.crear_liquidacion_parcial(cod_emp VARCHAR(8),retiro DECIMAL(10,2))
+MODIFIES SQL DATA
+BEGIN ATOMIC
+	DECLARE func VARCHAR(100) DEFAULT '';
+	DECLARE liq VARCHAR(9) DEFAULT '';
+	DECLARE num_cuenta VARCHAR(12);
+	INSERT INTO COOPERATIVA.liquidacion(monto,tipo,codigo_empleado) VALUES(retiro,'Parcial',cod_emp);
+	
+	SELECT numero_cuenta INTO num_cuenta FROM COOPERATIVA.cuenta WHERE cod_emp = codigo_empleado AND tipo = 'Retirable';
+	
+	CALL COOPERATIVA.crear_transaccion(num_cuenta,retiro*(-1),'Retiro Parcial');
+
+	SET func = (SELECT t.codigo_transaccion
+	FROM COOPERATIVA.transaccion t WHERE num_cuenta = t.numero_cuenta 
+	ORDER BY t.fecha DESC LIMIT 1);
+	
+	SET liq = (SELECT numero_liquidacion 
+    FROM COOPERATIVA.liquidacion 
+    WHERE codigo_empleado = cod_emp ORDER BY fecha_de_retiro DESC LIMIT 1);
+ 	
+	INSERT INTO COOPERATIVA.transaccion_liquidacion(codigo_transaccion, NUMERO_LIQUIDACION) VALUES(func,liq);
+END;
+
+
 --DEFAULT VALUES
 INSERT INTO COOPERATIVA.usuario_cliente(ID_USUARIO,CONTRASENA,ROL,PRIMER_NOMBRE,PRIMER_APELLIDO,CORREO_PRIMARIO)
 VALUES ('Admin','clave123',TRUE,'Super','Admin','SuperAdmin@gmail.com');
-
-
