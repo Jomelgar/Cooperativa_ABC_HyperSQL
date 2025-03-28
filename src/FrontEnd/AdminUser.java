@@ -31,7 +31,6 @@ public class AdminUser extends javax.swing.JPanel {
     private void initComponents() {
 
         addbtn = new javax.swing.JButton();
-        delbtn = new javax.swing.JButton();
         searchbtn = new javax.swing.JButton();
         slastfield = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
@@ -84,12 +83,6 @@ public class AdminUser extends javax.swing.JPanel {
             }
         });
         add(addbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 370, 160, 30));
-
-        delbtn.setBackground(new java.awt.Color(57, 45, 82));
-        delbtn.setFont(new java.awt.Font("Sitka Text", 0, 14)); // NOI18N
-        delbtn.setForeground(new java.awt.Color(255, 255, 255));
-        delbtn.setText("ELIMINAR USUARIO");
-        add(delbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(537, 370, -1, 30));
 
         searchbtn.setBackground(new java.awt.Color(51, 0, 51));
         searchbtn.setForeground(new java.awt.Color(255, 255, 255));
@@ -385,7 +378,6 @@ public class AdminUser extends javax.swing.JPanel {
         ArrayList<String> phones = BackEnd.Main.db.getTelephones(BackEnd.Main.db.getCodeEmp(user));
         addList(phones);
         phone_size = listModel.size();
-        System.out.println(phone_size);
     }
     
     private void clearData() 
@@ -411,7 +403,6 @@ public class AdminUser extends javax.swing.JPanel {
     private javax.swing.JButton addbtn;
     private javax.swing.JButton addlistbtn;
     private javax.swing.JTextField codeempfield;
-    private javax.swing.JButton delbtn;
     private javax.swing.JTable direcciontable;
     private com.toedter.calendar.JDateChooser fecha;
     private javax.swing.JTextField flastfield;

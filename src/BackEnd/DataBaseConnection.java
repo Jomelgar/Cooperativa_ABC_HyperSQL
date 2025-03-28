@@ -126,30 +126,28 @@ public class DataBaseConnection {
     {
         try 
         {
-            String sql = "CALL COOPERATIVA.actualizar_usuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            CallableStatement ps = connection.prepareCall(sql);
-            ps.setString(1, getStringOrNull(userData.get("id_usuario")));
-            ps.setString(2, getStringOrNull(userData.get("contrasena")));
-            ps.setBoolean(3, role);
-            ps.setDate(4,  (userData.get("fecha_de_nacimiento") != null) 
+            String sql = "CALL COOPERATIVA.actualizar_usuario(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1,getCodeEmp(getStringOrNull(userData.get("id_usuario"))));
+            ps.setString(2, getStringOrNull(userData.get("id_usuario")));
+            ps.setString(3, getStringOrNull(userData.get("contrasena")));
+            ps.setBoolean(4, role);
+            ps.setDate(5,  (userData.get("fecha_de_nacimiento") != null) 
                                 ? new java.sql.Date(((java.util.Date) userData.get("fecha_de_nacimiento")).getTime())  : null);
-            ps.setString(5, getStringOrNull(userData.get("primer_nombre")));
-            ps.setString(6, getStringOrNull(userData.get("segundo_nombre")));
-            ps.setString(7, getStringOrNull(userData.get("primer_apellido")));
-            ps.setString(8, getStringOrNull(userData.get("segundo_apellido")));
-            ps.setString(9, getStringOrNull(userData.get("referencia")));
-            ps.setString(10, getStringOrNull(userData.get("ciudad")));
-            ps.setString(11, getStringOrNull(userData.get("avenida")));
-            ps.setString(12, getStringOrNull(userData.get("casa")));
-            ps.setString(13, getStringOrNull(userData.get("departamento")));
-            ps.setString(14, getStringOrNull(userData.get("calle")));
-            ps.setString(15, getStringOrNull(userData.get("correo_primario")));
-            ps.setString(16, getStringOrNull(userData.get("correo_secundario")));
-            ps.setString(17, getCodeEmp(Main.logged.getUsername()));
-            
-            // Ejecutar la consulta
-            int affectedRows = ps.executeUpdate();
-            return affectedRows > 0;
+            ps.setString(6, getStringOrNull(userData.get("primer_nombre")));
+            ps.setString(7, userData.get("segundo_nombre").toString());
+            ps.setString(8, getStringOrNull(userData.get("primer_apellido")));
+            ps.setString(9, getStringOrNull(userData.get("segundo_apellido")));
+            ps.setString(10, getStringOrNull(userData.get("referencia")));
+            ps.setString(11, getStringOrNull(userData.get("ciudad")));
+            ps.setString(12, getStringOrNull(userData.get("avenida")));
+            ps.setString(13, getStringOrNull(userData.get("casa")));
+            ps.setString(14, getStringOrNull(userData.get("departamento")));
+            ps.setString(15, getStringOrNull(userData.get("calle")));
+            ps.setString(16, getStringOrNull(userData.get("correo_primario")));
+            ps.setString(17, getStringOrNull(userData.get("correo_secundario")));
+            ps.setString(18, getCodeEmp(Main.logged.getUsername()));
+            return ps.execute();
         }
         catch(Exception e)
         {
@@ -314,4 +312,260 @@ public class DataBaseConnection {
         return value.toString();
     }
     
+    public int countLoans(String user)
+    {
+        String query = "CALL COOPERATIVA.contar_prestamos(?)";
+        try
+        {
+          PreparedStatement stmt = connection.prepareStatement(query);
+          stmt.setString(1, getCodeEmp(user));
+          ResultSet rs = stmt.executeQuery();
+          if(rs.next()){
+            return rs.getInt(1);
+          }
+          else return -1;
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public double getMoneyApo(String user) {
+        Account account = getAccount(getCodeEmp(user));
+        return account.saldo_Apo();
+    }
+
+    public void setLoan(double d, int i, String tipo, String user) {
+        String query = "CALL COOPERATIVA.crear_prestamo(?,?,?,?)";
+        try
+        {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setDouble(1, d);
+            stmt.setInt(2, i);
+            stmt.setString(3, tipo);
+            stmt.setString(4, getCodeEmp(user));
+            stmt.execute();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public Loan getLoan(String user)
+    {
+        Loan l;
+        String query = "CALL COOPERATIVA.conseguir_prestamo(?)";
+        try
+        {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, getCodeEmp(user));
+            ResultSet rs = stmt.executeQuery();
+             if(rs.next())
+             {
+                 l = new Loan(rs.getDouble(1), rs.getDouble(2),rs.getDate(3).toString(), rs.getString(4),rs.getInt(5),rs.getString(6));
+                 return l;
+             }
+             return null;
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public void setPay(Loan l)
+    {
+        String query = "CALL COOPERATIVA.crear_pago(?,?,?,?,?,?)";
+        try
+        {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1,l.getNumber());
+            stmt.setDouble(2, l.getMonto());
+            stmt.setDouble(3, l.getSaldo());
+            stmt.setString(4, l.getTipo());
+            stmt.setInt(5, l.getPeriods());
+            stmt.setString(6, getCodeEmp(user));
+            stmt.executeUpdate();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public void setClosure(String user)
+    {
+        String query = "CALL COOPERATIVA.hacer_cierre(?)";
+        
+        try
+        {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1,getCodeEmp(user));
+            stmt.executeUpdate();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public double getTotalLiquidation(String user, String modified)
+    {
+        String query = "CALL COOPERATIVA.crear_liquidacion_total(?,?,?)";
+        double total = 0;
+        try
+        {
+            CallableStatement stmt = connection.prepareCall(query);
+            stmt.setString(1,getCodeEmp(user));
+            stmt.setString(2,getCodeEmp(modified));
+            stmt.registerOutParameter(3, Types.DOUBLE);
+            stmt.executeUpdate();
+            total = stmt.getDouble(3);
+            System.out.println(total);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return total;
+        
+    }
+    
+    public Object[][] getDivs(int year) {
+        String query = "CALL COOPERATIVA.dividendos_anio(?)";
+        try {
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setInt(1, year);
+            ResultSet rs = stm.executeQuery();
+            ArrayList<Object[]> rows = new ArrayList<>();
+            double total = 0;
+            double total_g = 0;
+            while (rs.next()) {
+                Object[] row = new Object[6];
+                row[0] = rs.getString(1);
+                row[1] = rs.getDate(2);
+                row[2] = rs.getString(3);
+                double saldo = rs.getBigDecimal(4).doubleValue();
+                total += saldo;
+                row[3] = saldo;
+                row[4] = rs.getBigDecimal(5);
+                double ganancia = rs.getBigDecimal(6).doubleValue();
+                total_g += ganancia;
+                row[5] = ganancia;
+                rows.add(row);
+            }
+            Object[][] data = new Object[rows.size() + 1][6];
+            for (int i = 0; i < rows.size(); i++) {
+                data[i] = rows.get(i);
+            }
+            data[rows.size()][0] = "Totales";
+            data[rows.size()][1] = rows.size();
+            data[rows.size()][2] = "";
+            data[rows.size()][3] = total;
+            data[rows.size()][4] = 1;
+            data[rows.size()][5] = total_g;
+            rs.close();
+            stm.close();
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Object[][] getNuevasAfiliaciones(int year) {
+        String query = "CALL COOPERATIVA.nuevas_afiliaciones(?)";
+        try {
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setInt(1, year);
+            ResultSet rs = stm.executeQuery();
+            ArrayList<Object[]> rows = new ArrayList<>();
+            double totalInversion = 0;
+            double totalAhorro = 0;
+            double total = 0;
+            while (rs.next()) {
+                Object[] row = new Object[6];
+                row[0] = rs.getString(1);  // codigo_empleado
+                row[1] = rs.getString(2);  // nombre
+                row[2] = rs.getDate(3);    // fecha_afiliacion
+
+                double inversion = rs.getBigDecimal(4).doubleValue();
+                totalInversion += inversion;
+                row[3] = inversion;
+
+                double ahorro = rs.getBigDecimal(5).doubleValue();
+                totalAhorro += ahorro;
+                row[4] = ahorro;
+
+                double totalSaldo = rs.getBigDecimal(6).doubleValue();
+                total += totalSaldo;
+                row[5] = totalSaldo;
+
+                rows.add(row);
+            }
+
+            Object[][] data = new Object[rows.size() + 1][6];
+            for (int i = 0; i < rows.size(); i++) {
+                data[i] = rows.get(i);
+            }
+
+            data[rows.size()][0] = "Totales";
+            data[rows.size()][1] = rows.size();
+            data[rows.size()][2] = "";
+            data[rows.size()][3] = totalInversion;
+            data[rows.size()][4] = totalAhorro;
+            data[rows.size()][5] = total;
+
+            rs.close();
+            stm.close();
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object[][] getEstadoCuenta(int year, String cuenta) {
+    String query = "CALL COOPERATIVA.estado_cuenta(?,?)";
+        try {
+            PreparedStatement stm = connection.prepareStatement(query);
+            stm.setInt(1, year);
+            stm.setString(2, cuenta);
+            ResultSet rs = stm.executeQuery();
+            ArrayList<Object[]> rows = new ArrayList<>();
+            double total_monto = 0;
+            int total = 0;
+            while (rs.next()) {
+                Object[] row = new Object[5];
+                row[0] = rs.getString(1);
+                double monto = rs.getDouble(2);
+                row[1] = monto;
+                total_monto += monto; 
+                row[2] =  rs.getDate(3).toString();
+                total++;
+                row[3] = rs.getString(4);
+                rows.add(row);
+            }
+
+            Object[][] data = new Object[rows.size() + 1][5];
+            for (int i = 0; i < rows.size(); i++) {
+                data[i] = rows.get(i);
+            }
+
+            data[rows.size()][0] = "Totales";
+            data[rows.size()][1] = total_monto;
+            data[rows.size()][2] = total;
+            data[rows.size()][3] = "";
+            data[rows.size()][4] = "";
+
+            rs.close();
+            stm.close();
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

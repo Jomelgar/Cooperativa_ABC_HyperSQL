@@ -1,10 +1,15 @@
 package FrontEnd;
 
-public class AccountAdmin extends javax.swing.JPanel {
+
+
+
+
+
+public class AccountNormal extends javax.swing.JPanel {
     private BackEnd.Account acc;
     private String user;
     
-    public AccountAdmin() {
+    public AccountNormal() {
         initComponents();
         user = BackEnd.Main.logged.getUsername();
         setData(user);
@@ -13,9 +18,6 @@ public class AccountAdmin extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        searchbtn = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
-        searchfield = new javax.swing.JTextField();
         type = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -23,7 +25,6 @@ public class AccountAdmin extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         money = new javax.swing.JTextField();
         liqbtn = new javax.swing.JButton();
-        modbtn = new javax.swing.JButton();
         abonobtn = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -36,18 +37,6 @@ public class AccountAdmin extends javax.swing.JPanel {
         setOpaque(false);
         setPreferredSize(new java.awt.Dimension(740, 440));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        searchbtn.setBackground(new java.awt.Color(51, 0, 51));
-        searchbtn.setForeground(new java.awt.Color(255, 255, 255));
-        searchbtn.setText("SEARCH");
-        searchbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchbtnActionPerformed(evt);
-            }
-        });
-        add(searchbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 20, -1, -1));
-        add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 380, 20));
-        add(searchfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 380, -1));
 
         type.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aportaciones", "Retirable" }));
         type.addActionListener(new java.awt.event.ActionListener() {
@@ -82,17 +71,6 @@ public class AccountAdmin extends javax.swing.JPanel {
             }
         });
         add(liqbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 270, 260, 40));
-
-        modbtn.setBackground(new java.awt.Color(57, 45, 82));
-        modbtn.setFont(new java.awt.Font("Sitka Text", 0, 18)); // NOI18N
-        modbtn.setForeground(new java.awt.Color(255, 255, 255));
-        modbtn.setText("MODIFICAR SALDO");
-        modbtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modbtnActionPerformed(evt);
-            }
-        });
-        add(modbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 330, 260, 40));
 
         abonobtn.setBackground(new java.awt.Color(57, 45, 82));
         abonobtn.setFont(new java.awt.Font("Sitka Text", 0, 18)); // NOI18N
@@ -137,16 +115,6 @@ public class AccountAdmin extends javax.swing.JPanel {
         add(refreshbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 20, 120, 40));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void searchbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchbtnActionPerformed
-        
-        String user = searchfield.getText();
-        if(BackEnd.Main.db.getCodeEmp(user) != null){
-            this.user = user;
-            setData(this.user);
-        }
-
-    }//GEN-LAST:event_searchbtnActionPerformed
-
     private void DescKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_DescKeyTyped
         if(Desc.getText().length() > 256)
         {
@@ -163,14 +131,8 @@ public class AccountAdmin extends javax.swing.JPanel {
         setData(user);
     }//GEN-LAST:event_typeActionPerformed
 
-    private void modbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modbtnActionPerformed
-        // TODO add your handling code here:
-        BackEnd.Main.db.modPayment((double)monto.getValue(), num_acc.getText(),BackEnd.Main.db.getCodeEmp(BackEnd.Main.logged.getUsername()));
-        setData(user);
-    }//GEN-LAST:event_modbtnActionPerformed
-
     private void liqbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liqbtnActionPerformed
-       liquidation liq = new liquidation(null,true,(double)monto.getValue(),BackEnd.Main.logged.getUsername(),user);
+       liquidation liq = new liquidation(null,true,(double)monto.getValue(),user, BackEnd.Main.logged.getUsername());
        liq.setVisible(true);
     }//GEN-LAST:event_liqbtnActionPerformed
 
@@ -189,15 +151,11 @@ public class AccountAdmin extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton liqbtn;
-    private javax.swing.JButton modbtn;
     private javax.swing.JTextField money;
     private javax.swing.JSpinner monto;
     private javax.swing.JTextField num_acc;
     private javax.swing.JButton refreshbtn;
-    private javax.swing.JButton searchbtn;
-    private javax.swing.JTextField searchfield;
     private javax.swing.JComboBox<String> type;
     // End of variables declaration//GEN-END:variables
 

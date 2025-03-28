@@ -26,9 +26,9 @@ public class StartupMenu extends javax.swing.JFrame {
         exitbtn = new javax.swing.JButton();
         userbtn = new javax.swing.JButton();
         startbtn = new javax.swing.JButton();
+        loansbtn = new javax.swing.JButton();
         display = new javax.swing.JPanel();
         BackGround = new javax.swing.JLabel();
-        loansbtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(960, 550));
@@ -42,7 +42,7 @@ public class StartupMenu extends javax.swing.JFrame {
                 accountbtnActionPerformed(evt);
             }
         });
-        getContentPane().add(accountbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 350, 110, 80));
+        getContentPane().add(accountbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 350, 110, 80));
 
         exitbtn.setBackground(new java.awt.Color(0,0,0,0));
         exitbtn.addActionListener(new java.awt.event.ActionListener() {
@@ -70,6 +70,15 @@ public class StartupMenu extends javax.swing.JFrame {
         });
         getContentPane().add(startbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 90, 110));
 
+        loansbtn.setBorderPainted(false);
+        loansbtn.setContentAreaFilled(false);
+        loansbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loansbtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(loansbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 100, 70));
+
         display.setBackground(new java.awt.Color(0,0,0,0)
         );
         getContentPane().add(display, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 80, 740, 420));
@@ -77,10 +86,6 @@ public class StartupMenu extends javax.swing.JFrame {
         BackGround.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Sources/startup_menu.png"))); // NOI18N
         BackGround.setText("jLabel1");
         getContentPane().add(BackGround, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, -1));
-
-        loansbtn.setBorderPainted(false);
-        loansbtn.setContentAreaFilled(false);
-        getContentPane().add(loansbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 100, 70));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -129,13 +134,23 @@ public class StartupMenu extends javax.swing.JFrame {
             display.add(new AccountAdmin());
         }else
         {
-            
+            display.add(new AccountNormal());
         }
         display.revalidate();
         display.repaint();
         this.revalidate();
         this.repaint();
     }//GEN-LAST:event_accountbtnActionPerformed
+
+    private void loansbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loansbtnActionPerformed
+        // TODO add your handling code here:
+        display.removeAll();
+        display.add(new Loan());
+        display.revalidate();
+        display.repaint();
+        this.revalidate();
+        this.repaint();
+    }//GEN-LAST:event_loansbtnActionPerformed
 
     public void DisplayStart()
     {
