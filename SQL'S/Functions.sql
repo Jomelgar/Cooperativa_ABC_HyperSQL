@@ -210,11 +210,9 @@ RETURNS TABLE
 )
 READS SQL DATA
 BEGIN ATOMIC
-	RETURN TABLE(SELECT d.codigo_empleado,c.fecha,d.nombre,d.saldo,
-	CASE WHEN sum(d.ganancias) = 0 THEN 0 ELSE 100 * d.ganancias / SUM(d.ganancias) 
-    END AS porcentaje,sum(d.ganancias) AS ganancias FROM COOPERATIVA.dividendos d INNER JOIN COOPERATIVA.cierre c ON 
-    c.id_cierre = d.id_cierre WHERE YEAR(c.fecha) = anio
-	GROUP BY d.codigo_empleado, c.fecha, d.nombre, d.saldo, d.ganancias);
+	RETURN TABLE(SELECT d.codigo_empleado,c.fecha,d.nombre,d.saldo,d.porcentaje, d.ganancias 
+	FROM COOPERATIVA.dividendos d INNER JOIN COOPERATIVA.cierre c ON 
+    c.id_cierre = d.id_cierre WHERE YEAR(c.fecha) = anio);
 END;
 
 CREATE FUNCTION COOPERATIVA.nuevas_afiliaciones(anio int)

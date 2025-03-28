@@ -252,7 +252,7 @@ BEGIN ATOMIC
 	DECLARE total DECIMAL(10,2);
 	DECLARE suma DECIMAL(10,2);
 	DECLARE porcentaje DOUBLE;
-	SET cierre = SELECT id_cierre FROM cooperativa.cierre ORDER BY fecha LIMIT 1;
+	SET cierre = SELECT id_cierre FROM cooperativa.cierre ORDER BY fecha DESC LIMIT 1;
 	
 	CALL COOPERATIVA.crear_cierre_transaccion(cierre);
     CALL COOPERATIVA.crear_cierre_pagos(usuario);
@@ -345,7 +345,7 @@ IF  (SELECT COUNT(*) FROM COOPERATIVA.cuenta
 	SELECT numero_cuenta, saldo INTO c_re,s_re FROM COOPERATIVA.cuenta WHERE codigo_empleado = usuario AND tipo = 'Retirable'; 
 	SET l_total = s_re + s_apo + (SELECT SUM(ganancias) FROM COOPERATIVA.dividendos WHERE codigo_empleado = usuario AND estado = TRUE);
     INSERt INTO COOPERATIVA.liquidacion(monto,tipo,codigo_empleado) VALUES (L_total,'Total',modificador);
-	SET v_liq = SELECT numero_liquidacion FROM COOPERATIVA.liquidacion WHERE codigo_empleado = modificador ORDER BY fecha_de_retiro LIMIT 1; 
+	SET v_liq = SELECT numero_liquidacion FROM COOPERATIVA.liquidacion WHERE codigo_empleado = modificador ORDER BY fecha_de_retiro DEsC LIMIT 1; 
         
     while v_estado = TRUE DO
 		CALL COOPERATIVA.crear_pago(v_numero_prestamos,v_monto,v_saldo,v_tipo,v_periodos, usuario);

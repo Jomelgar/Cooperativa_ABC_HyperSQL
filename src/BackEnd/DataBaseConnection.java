@@ -439,6 +439,7 @@ public class DataBaseConnection {
             stm.setInt(1, year);
             ResultSet rs = stm.executeQuery();
             ArrayList<Object[]> rows = new ArrayList<>();
+            double tot_por = 0;
             double total = 0;
             double total_g = 0;
             while (rs.next()) {
@@ -449,7 +450,9 @@ public class DataBaseConnection {
                 double saldo = rs.getBigDecimal(4).doubleValue();
                 total += saldo;
                 row[3] = saldo;
-                row[4] = rs.getBigDecimal(5);
+                double porcentaje = rs.getBigDecimal(5).doubleValue();
+                tot_por+= porcentaje;
+                row[4] = porcentaje;
                 double ganancia = rs.getBigDecimal(6).doubleValue();
                 total_g += ganancia;
                 row[5] = ganancia;
@@ -463,7 +466,7 @@ public class DataBaseConnection {
             data[rows.size()][1] = rows.size();
             data[rows.size()][2] = "";
             data[rows.size()][3] = total;
-            data[rows.size()][4] = 1;
+            data[rows.size()][4] = tot_por;
             data[rows.size()][5] = total_g;
             rs.close();
             stm.close();
